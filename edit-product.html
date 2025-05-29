@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Mahsulotni Tahrirlash - Ijarachi.uz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 1rem;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ff4d4d;
+    }
+
+    form {
+      background-color: #1e1e1e;
+      padding: 1rem;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input, textarea {
+      padding: 0.6rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>✏️ E'lonni Tahrirlash</h2>
+
+  <form id="editForm">
+    <input type="text" id="name" placeholder="Mahsulot nomi" required />
+    <input type="number" id="price" placeholder="Narxi (so‘m)" required />
+    <input type="text" id="image" placeholder="Rasm URL manzili" required />
+    <textarea id="desc" placeholder="Mahsulot haqida..." rows="4" required></textarea>
+    <button type="submit">💾 Saqlash</button>
+  </form>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    const allProducts = JSON.parse(localStorage.getItem('products') || '[]');
+    const product = allProducts.find(p => p.id === productId);
+
+    if (!product) {
+      alert("Mahsulot topilmadi!");
+      window.location.href = 'my-products.html';
+    }
+
+    // Forma maydonlarini to‘ldirish
+    document.getElementById('name').value = product.name;
+    document.getElementById('price').value = product.price;
+    document.getElementById('image').value = product.image;
+    document.getElementById('desc').value = product.description;
+
+    // Forma yuborilganda
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      product.name = document.getElementById('name').value;
+      product.price = document.getElementById('price').value;
+      product.image = document.getElementById('image').value;
+      product.description = document.getElementById('desc').value;
+
+      const updatedProducts = allProducts.map(p => p.id === product.id ? product : p);
+      localStorage.setItem('products', JSON.stringify(updatedProducts));
+
+      alert("Mahsulot yangilandi!");
+      window.location.href = 'my-products.html';
+    });
+  </script>
+
+</body>
+</html>

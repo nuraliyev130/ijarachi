@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Mahsulotlarni qidirish - Ijarachi.uz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 1rem;
+      background: #121212;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ff4d4d;
+      margin-bottom: 1rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .controls input,
+    .controls select {
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .product-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .product-card {
+      background: #1f1f1f;
+      padding: 1rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .product-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .product-info h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .product-info p {
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+    }
+
+    .empty {
+      text-align: center;
+      color: #aaa;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🔍 Qidiruv va filter</h2>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Mahsulot nomini kiriting...">
+    <select id="categoryFilter">
+      <option value="">🗂️ Barcha kategoriyalar</option>
+      <option value="Elektronika">Elektronika</option>
+      <option value="Uy-ro‘zg‘or">Uy-ro‘zg‘or</option>
+      <option value="Avtomobil">Avtomobil</option>
+      <option value="Asbob-uskuna">Asbob-uskuna</option>
+    </select>
+    <select id="priceSort">
+      <option value="">💰 Narx bo‘yicha</option>
+      <option value="asc">Narx: pastdan yuqoriga</option>
+      <option value="desc">Narx: yuqoridan pastga</option>
+    </select>
+  </div>
+
+  <div id="productList" class="product-list"></div>
+  <div id="emptyMessage" class="empty" style="display:none;">Mahsulot topilmadi.</div>
+
+  <script>
+    const allProducts = JSON.parse(localStorage.getItem("products") || "[]");
+
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const priceSort = document.getElementById("priceSort");
+    const productList = document.getElementById("productList");
+    const emptyMessage = document.getElementById("emptyMessage");
+
+    function filterAndRender() {
+      let filtered = [...allProducts];
+
+      const searchTerm = searchInput.value.toLowerCase();
+      const category = categoryFilter.value;
+      const sort = priceSort.value;
+
+      if (searchTerm) {
+        filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm));
+      }
+
+      if (category) {
+        filtered = filtered.filter(p => p.category === category);
+      }
+
+      if (sort === "asc") {
+        filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+      } else if (sort === "desc") {
+        filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+      }
+
+      renderProducts(filtered);
+    }
+
+    function renderProducts(products) {
+      productList.innerHTML = "";
+      if (products.length === 0) {
+        emptyMessage.style.display = "block";
+        return;
+      } else {
+        emptyMessage.style.display = "none";
+      }
+
+      products.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
+          <img src="${p.image || 'https://via.placeholder.com/100'}" alt="Rasm">
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <p><strong>Narx:</strong> ${p.price} so‘m</p>
+            <p><strong>Kategoriya:</strong> ${p.category}</p>
+          </div>
+        `;
+        productList.appendChild(card);
+      });
+    }
+
+    searchInput.addEventListener("input", filterAndRender);
+    categoryFilter.addEventListener("change", filterAndRender);
+    priceSort.addEventListener("change", filterAndRender);
+
+    filterAndRender(); // Initial rendering
+  </script>
+
+</body>
+</html>

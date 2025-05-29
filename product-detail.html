@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Mahsulot tafsiloti - Ijarachi.uz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      background: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 1rem;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .product-img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      color: #ff4d4d;
+    }
+
+    .info {
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background: #ff4d4d;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img id="productImg" class="product-img" src="" alt="Mahsulot rasmi">
+    <h2 id="productName"></h2>
+    <p class="info"><strong>Narxi:</strong> <span id="productPrice"></span> so‘m / kun</p>
+    <p class="info"><strong>Kategoriya:</strong> <span id="productCategory"></span></p>
+    <button class="btn" onclick="rentProduct()">📤 Ijaraga olish</button>
+  </div>
+
+  <script>
+    const products = JSON.parse(localStorage.getItem("products") || "[]");
+    const index = +localStorage.getItem("viewProductIndex");
+    const product = products[index];
+
+    if (!product) {
+      alert("Mahsulot topilmadi.");
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("productImg").src = product.image || "https://via.placeholder.com/300";
+    document.getElementById("productName").textContent = product.name;
+    document.getElementById("productPrice").textContent = product.price;
+    document.getElementById("productCategory").textContent = product.category;
+
+    function rentProduct() {
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+      const newOrder = {
+        name: product.name,
+        price: product.price,
+        category: product.category,
+        image: product.image,
+        date: new Date().toLocaleString()
+      };
+
+      orders.push(newOrder);
+      localStorage.setItem("orders", JSON.stringify(orders));
+      alert("✅ Buyurtma muvaffaqiyatli yuborildi!");
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

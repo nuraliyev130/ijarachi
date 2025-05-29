@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mahsulot Tafsilotlari</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      padding: 1rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    img {
+      width: 100%;
+      border-radius: 12px;
+      max-height: 250px;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      margin: 0.5rem 0;
+      color: #1a73e8;
+    }
+
+    p {
+      margin: 0.3rem 0;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 0.8rem;
+      width: 100%;
+      background: #28a745;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <img id="itemImage" src="" alt="Mahsulot rasmi" />
+  <h2 id="itemName"></h2>
+  <p><strong>Narxi:</strong> <span id="itemPrice"></span> so'm/kun</p>
+  <p><strong>Kategoriya:</strong> <span id="itemCategory"></span></p>
+  <p><strong>Tavsif:</strong> <span id="itemDesc"></span></p>
+  <button id="orderBtn">Ijaraga olish</button>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const index = parseInt(params.get('index'));
+  const items = JSON.parse(localStorage.getItem('items') || '[]');
+  const item = items[index];
+
+  if (item) {
+    document.getElementById('itemImage').src = item.image;
+    document.getElementById('itemName').textContent = item.name;
+    document.getElementById('itemPrice').textContent = item.price;
+    document.getElementById('itemCategory').textContent = item.category;
+    document.getElementById('itemDesc').textContent = item.description || '-';
+  }
+
+  document.getElementById('orderBtn').addEventListener('click', () => {
+    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    orders.push({
+      itemIndex: index,
+      name: item.name,
+      date: new Date().toLocaleString()
+    });
+    localStorage.setItem('orders', JSON.stringify(orders));
+    alert('Buyurtma qabul qilindi!');
+  });
+</script>
+
+</body>
+</html>
